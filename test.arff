@@ -1,0 +1,5 @@
+@relation opinions
+@attribute "Kiriya" STRING
+@attribute "abrupt" STRING
+@data
+{0 0,1 0}

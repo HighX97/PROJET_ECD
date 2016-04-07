@@ -1,0 +1,15 @@
+@relation Weather
+
+@attribute City STRING
+@attribute Date DATE "MM/YY"
+@attribute Temperature NUMERIC
+@attribute Humidity NUMERIC
+@attribute Wind NUMERIC
+@attribute Emergency {Yes, No}
+
+@data
+{0 Alès, 1 "03/14",2 14.4 ,3 68 ,4 57 ,5 Yes}
+{0 Paris, 1 "03/15",2 18.4,3 60, 5 No}
+{0 Nîmes, 1 "03/14",2 20.3,3 72,4 45,5 Yes}
+{0 Nice, 1 "04/01", 2 15.6, 3 68, 4 11, 5 No}
+{0 Lunel, 1 "03/18",2 28.0,3 71, 5 No}
