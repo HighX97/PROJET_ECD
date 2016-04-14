@@ -1,0 +1,30 @@
+@relation opinions
+@attribute "" STRING
+@attribute "a" STRING
+@attribute "b" STRING
+@attribute "c" STRING
+@attribute "d" STRING
+@attribute "e" STRING
+@attribute "f" STRING
+@attribute "g" STRING
+@attribute "h" STRING
+@attribute "i" STRING
+@attribute "j" STRING
+@attribute "k" STRING
+@attribute "l" STRING
+@attribute "m" STRING
+@attribute "n" STRING
+@attribute "o" STRING
+@attribute "p" STRING
+@attribute "q" STRING
+@attribute "r" STRING
+@attribute "s" STRING
+@attribute "t" STRING
+@attribute "u" STRING
+@attribute "v" STRING
+@attribute "w" STRING
+@attribute "x" STRING
+@attribute "z" STRING
+@data
+
+{0 1,1 1,2 0,3 0,4 0,5 0,6 1,7 0,8 0,9 1,10 0,11 0,12 0,13 0,14 0,15 0,16 0,17 0,18 0,19 0,20 0,21 0,22 0,23 0,24 0,25 0

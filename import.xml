@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<import version="0.7" author="lowx" date="14-04-16" desc="" name="ecdclassificationdedocumentsparopinion" rootDir="/home/lowx/Documents/Professionnel/Etude/Master_AIGLE/M1/Extraction_Connaissances_Données/ECD_Classification_de_documents_par_opinion" script="">
+ <linkGrp type="align"></linkGrp>
+ <corpora>
+    <corpus desc="&lt;pre&gt;&lt;br/&gt;- ecdclassificationdedocumentsparopinion&lt;br/&gt;- lowx&lt;br/&gt;- 14-04-16&lt;/pre&gt;" cqpid="" encoding="UTF-8" lang="fr" font="" annotate="true" name="ECDCLASSIFICATIONDEDOCUMENTSPAROPINION">
+       <tokenizer onlyThoseTests="false"></tokenizer>
+       <xslt xsl=""></xslt>
+       <pattributes></pattributes>
+       <sattributes></sattributes>
+       <biblios></biblios>
+       <uis></uis>
+       <editions default="default">
+       	<edition name="default" mode="groovy" page_break_tag="pb" words_per_page="500" build_edition="true" script="pager.groovy"/>
+       </editions>
+       <texts></texts>
+       <queries></queries>
+       <preBuild></preBuild>
+    </corpus>
+ </corpora>
+</import>
