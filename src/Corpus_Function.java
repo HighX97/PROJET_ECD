@@ -3,6 +3,8 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -138,11 +140,17 @@ public class Corpus_Function
 			}
 		}
 		System.out.println("Import suceeded");
-
 		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~IDENTIFICATION DES MOTS PRÉSENT DANS LES DOCUMENTS DU CORPUS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		System.out.println("words.size() : "+words.size());
+		System.out.println("words.size() before : "+words.size());
+		this.pause(5);
 		//Pour chaque document du texte
+		DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+		Calendar cal = Calendar.getInstance();
+		System.out.println(dateFormat.format(cal.getTime())); //2014/08/06 16:00:22
+		PrintWriter writer;
+		String mots ="";
+
 		for (int l=0;l<2000;l++)
 		{
 			//Pour l'opinion du document l
@@ -155,30 +163,17 @@ public class Corpus_Function
 			for(String s : tokens)
 			{
 				String s_remove_stop_caractere = remove_stop_caractere(s);
-				this.pause(2);
 				//Si le mot n'est pas encore présent dans le dictionnaire des mots "words"
-				if(words.get(s_remove_stop_caractere) == null)
+				if(s_remove_stop_caractere.length() >2)
 				{
-
-					//On insert le mot s dans le dictionnaire des mots "words"
-
-					words.put(s_remove_stop_caractere,new Mot(s_remove_stop_caractere));
-					Mot m = words.get(s_remove_stop_caractere);
-					//Création d'un instance d'occument (occ,maxOcc) pour la ligne courante
-					Our_occurence occurrence =  new Our_occurence(1, tokens.length);
-					//Affection de l'instance d'occurence au mot
-					m.setOccurrencePos(occurrence, l);
-					//
-					m.getBoolMod()[l]=true;
-				}
-				//Si le mot est présent dans le dictionnaire des mots "words"
-				else
-				{
-					//Récupération de l'objet mort
-					Mot m = words.get(s_remove_stop_caractere);
-					//Si l'occurence du mot pour la ligne courante est null
-					if(m.getOccurrencePos(l) ==null)
+					if(words.get(s_remove_stop_caractere) == null)
 					{
+						//						writer.println(s_remove_stop_caractere);
+						mots+=s_remove_stop_caractere+"\n";
+						//On insert le mot s dans le dictionnaire des mots "words"
+
+						words.put(s_remove_stop_caractere,new Mot(s_remove_stop_caractere));
+						Mot m = words.get(s_remove_stop_caractere);
 						//Création d'un instance d'occument (occ,maxOcc) pour la ligne courante
 						Our_occurence occurrence =  new Our_occurence(1, tokens.length);
 						//Affection de l'instance d'occurence au mot
@@ -186,20 +181,50 @@ public class Corpus_Function
 						//
 						m.getBoolMod()[l]=true;
 					}
+					//Si le mot est présent dans le dictionnaire des mots "words"
 					else
 					{
-						//Incrémentation de l'instance d'occurence du mot
-						m.innOccurrence(l);
+						//Récupération de l'objet mort
+						Mot m = words.get(s_remove_stop_caractere);
+						//Si l'occurence du mot pour la ligne courante est null
+						if(m.getOccurrencePos(l) ==null)
+						{
+							//Création d'un instance d'occument (occ,maxOcc) pour la ligne courante
+							Our_occurence occurrence =  new Our_occurence(1, tokens.length);
+							//Affection de l'instance d'occurence au mot
+							m.setOccurrencePos(occurrence, l);
+							//
+							m.getBoolMod()[l]=true;
+						}
+						else
+						{
+							//Incrémentation de l'instance d'occurence du mot
+							m.innOccurrence(l);
+						}
+						//					System.out.println("----");
+						//					System.out.println(m.getOccurrencePos(l).getValue());
+						//					System.out.println(m.getOccurrenceTotal());
 					}
-					System.out.println("----");
-					System.out.println(m.getOccurrencePos(l).getValue());
-					System.out.println(m.getOccurrenceTotal());
+					//					writer.close();
 				}
 			}
 		}
-		System.out.println("words.size() : "+words.size());
+		try {
+			writer = new PrintWriter("CorpsWord"+dateFormat.format(cal.getTime())+".txt", "UTF-8");
+			System.out.println(mots);
+			writer.println(mots);
+			writer.close();
+		}
+		catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("words.size() after : "+words.size());
+		pause(5);
 	}
-
 	/*
 	* -------------------------------------------------------------------------------------------------------------------
 	* -------------------------------------------------------------------------------------------------------------------
@@ -219,7 +244,7 @@ public class Corpus_Function
 
 		booleanModel_Arff = booleanModel_Arff + relation +" "+ relationName;
 		lines_booleanModel_Arff.add(relation +" "+ relationName);
-//				System.out.println(booleanModel_Arff);
+		//				System.out.println(booleanModel_Arff);
 		booleanModel_Arff = booleanModel_Arff + "\n";
 		for(Entry<String, Mot> entry_s_m : words.entrySet())
 		{
@@ -227,48 +252,48 @@ public class Corpus_Function
 			booleanModel_Arff = booleanModel_Arff + "\n" + attribute + " \""+entry_s_m.getKey()+"\" STRING";
 			lines_booleanModel_Arff.add(attribute + " \""+entry_s_m.getKey()+"\" STRING");
 		}
-//				System.out.println(booleanModel_Arff);
+		//				System.out.println(booleanModel_Arff);
 		lines_booleanModel_Arff.add(data);
 		booleanModel_Arff = booleanModel_Arff + "\n";
 		int l;
-		for (l=0;l<1;l++)
-//		for (l=0;l<2000;l++)
+//		for (l=0;l<1;l++)
+		for (l=0;l<10;l++)
 		{
 			System.out.println(l);
 			int i=0;
 			String line="";
 			for(Entry<String, Mot> entry_s_m : words.entrySet())
 			{
-//				if(l%10000 ==0)
-//				{
-//					System.out.println("Mot["+i+"/"+l+"] : "+entry_s_m.getValue().getValue());
-////				System.out.println("Mot["+i+"/"+l+"] : "+entry_s_m.getValue().getValue());
-//				}
-					if (i==0)
+				//				if(l%10000 ==0)
+				//				{
+				//					System.out.println("Mot["+i+"/"+l+"] : "+entry_s_m.getValue().getValue());
+				////				System.out.println("Mot["+i+"/"+l+"] : "+entry_s_m.getValue().getValue());
+				//				}
+				if (i==0)
+				{
+					booleanModel_Arff = booleanModel_Arff +"\n"+"{";
+					booleanModel_Arff = booleanModel_Arff + i + " " + entry_s_m.getValue().getBoolMod_Pos_Int(l);
+					line += "\n"+"{";
+					line += i + " " + entry_s_m.getValue().getBoolMod_Pos_Int(l);
+					//						System.out.println(line);
+					//						pause(5);
+				}
+				if (i>0)
+				{
+					booleanModel_Arff += "," + i + " " + entry_s_m.getValue().getBoolMod_Pos_Int(l);
+					line += ","+ i + " " + entry_s_m.getValue().getBoolMod_Pos_Int(l);
+					if (i%77 == 0)
 					{
-						booleanModel_Arff = booleanModel_Arff +"\n"+"{";
-						booleanModel_Arff = booleanModel_Arff + i + " " + entry_s_m.getValue().getBoolMod_Pos_Int(l);
-						line += "\n"+"{";
-						line += i + " " + entry_s_m.getValue().getBoolMod_Pos_Int(l);
-//						System.out.println(line);
-//						pause(5);
+						//							System.out.println(line);
 					}
-					if (i>0)
-					{
-						booleanModel_Arff += "," + i + " " + entry_s_m.getValue().getBoolMod_Pos_Int(l);
-						line += ","+ i + " " + entry_s_m.getValue().getBoolMod_Pos_Int(l);
-						if (i%77 == 0)
-						{
-//							System.out.println(line);
-						}
-					}
-					if (i == words.size())
-					{
-						booleanModel_Arff = booleanModel_Arff +"}";
-						line = line +"}";
-//						System.out.println(line);
-//						pause(5);
-					}
+				}
+				if (i == words.size()-1)
+				{
+					booleanModel_Arff = booleanModel_Arff +"}";
+					line = line +"}";
+					//						System.out.println(line);
+					//						pause(5);
+				}
 				i++;
 			}
 			lines_booleanModel_Arff.add(line);
@@ -439,7 +464,7 @@ public class Corpus_Function
 				{
 					tfMax = entry_s_m.getValue().getTf_Pos(l);
 				}
-				if (tfMin > entry_s_m.getValue().getTf_Pos(l))
+				if (entry_s_m.getValue().getTf_Pos(l) >0 && tfMin > entry_s_m.getValue().getTf_Pos(l) )
 				{
 					tfMin = entry_s_m.getValue().getTf_Pos(l);
 				}
@@ -447,9 +472,13 @@ public class Corpus_Function
 				{
 					tf_idfMax = entry_s_m.getValue().getTf_idf_Pos(l);
 				}
-				if (tf_idfMin > entry_s_m.getValue().getTf_idf_Pos(l))
+				if (entry_s_m.getValue().getTf_idf_Pos(l) >0 && tf_idfMin > entry_s_m.getValue().getTf_idf_Pos(l))
 				{
 					tf_idfMin = entry_s_m.getValue().getTf_idf_Pos(l);
+				}
+				if (entry_s_m.getValue().getTf_idf_Pos(l)>0)
+				{
+					System.out.println(entry_s_m.getValue().getValue()+"["+l+"] : tf_idf"+entry_s_m.getValue().getTf_idf_Pos(l));
 				}
 			}
 		}
@@ -460,9 +489,15 @@ public class Corpus_Function
 
 	}
 
+	public  void termWeiting_Doc_Length_Norlamisation()
+	{
+		System.out.println("termWeiting_TF_IDF() : TODO\n");
+	}
+
 
 	public  void termWeiting_Write_Arff()
 	{
+		System.out.println("termWeiting_Write_Arff() : start succeded");
 		String termWeiting_Arff = "";
 		List<String> lines_termWeiting_Arff = new ArrayList<String>();
 
@@ -479,45 +514,50 @@ public class Corpus_Function
 		for(Entry<String, Mot> entry_s_m : words.entrySet())
 		{
 			k++;
-			System.out.println("Mot["+k+"] : "+entry_s_m.getValue().getValue());
-			termWeiting_Arff = termWeiting_Arff + "\n" + attribute + " \""+entry_s_m.getKey()+"\"";
-			lines_termWeiting_Arff.add(attribute + " \""+entry_s_m.getKey()+"\"");
+			System.out.println("Mot["+k+"] : "+entry_s_m.getValue().getValue()+" STRING"+"  "+entry_s_m.getValue().getIdf());
+			termWeiting_Arff = termWeiting_Arff + "\n" + attribute + " \""+entry_s_m.getKey()+"\" STRING";
+			lines_termWeiting_Arff.add(attribute + " \""+entry_s_m.getKey()+"\" STRING");
 		}
 		termWeiting_Arff = termWeiting_Arff + "\n";
+		lines_termWeiting_Arff.add(data);
 		int l;
-		for (l=0;l<2000;l++)
+		for (l=0;l<10;l++)
 		{
 			int i=0;
 			String line="";
 			for(Entry<String, Mot> entry_s_m : words.entrySet())
 			{
-				System.out.println("Mot["+i+"] : "+entry_s_m.getValue().getValue());
-					if (i==0)
-					{
-						termWeiting_Arff = termWeiting_Arff +"\n"+"{";
-						termWeiting_Arff = termWeiting_Arff + i + " " + entry_s_m.getValue().getTf_idf_Pos(l);
-						line = line +"\n"+"{";
-						line = line + i + " " + entry_s_m.getValue().getTf_idf();
-						System.out.println(line);
-						pause(5);
-					}
-					if (i>0)
-					{
-						termWeiting_Arff += "," + i + " " + entry_s_m.getValue().getTf_idf_Pos(l);
-						line += ","+ i + " " + entry_s_m.getValue().getTf_idf();
-						if (i%77 == 0)
-						{
-							System.out.println(line);
-							pause(5);
-						}
-					}
-					if (i == words.size())
-					{
-						termWeiting_Arff = termWeiting_Arff +"}";
-						line = line +"}";
-						System.out.println(line);
-						pause(5);
-					}
+				if (entry_s_m.getValue().getTf_idf_Pos(l)>0)
+				{
+					System.out.println(entry_s_m.getValue().getValue()+"["+l+"] : tf_idf"+entry_s_m.getValue().getTf_idf_Pos(l));
+				}
+				//System.out.println("Mot["+i+"] : "+entry_s_m.getValue().getValue());
+				if (i==0)
+				{
+//					termWeiting_Arff = termWeiting_Arff +"\n"+"{";
+//					termWeiting_Arff = termWeiting_Arff + i + " " + entry_s_m.getValue().getTf_idf_Pos(l);
+					line = line +"\n"+"{";
+					line = line + i + " " + entry_s_m.getValue().getTf_idf_Pos(l);
+//					System.out.println(line);
+				}
+				if (i>0)
+				{
+//					termWeiting_Arff += "," + i + " " + entry_s_m.getValue().getTf_idf_Pos(l);
+					line += ","+ i + " " + entry_s_m.getValue().getTf_idf_Pos(l);
+//					if (i%77 == 0)
+//					{
+//						System.out.println(line);
+//					}
+				}
+				if (i == words.size()-1)
+				{
+					pause(2);
+					System.out.println("Coucou les amis");
+					pause(2);
+//					termWeiting_Arff = termWeiting_Arff +"}";
+					line = line +"}";
+//					System.out.println(line);
+				}
 				i++;
 			}
 			lines_termWeiting_Arff.add(line);
@@ -525,7 +565,10 @@ public class Corpus_Function
 		}
 		try {
 			System.out.println("writeLargerTextFile(\"opinion_terme_weiting.arff\",lines_termWeiting_Arff); Do");
-			writeLargerTextFile("opinion_terme_weiting.arff",lines_termWeiting_Arff);
+			DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+			Calendar cal = Calendar.getInstance();
+			System.out.println(dateFormat.format(cal.getTime())); //2014/08/06 16:00:22
+			writeLargerTextFile("opinion_terme_weiting_"+dateFormat.format(cal.getTime())+".arff",lines_termWeiting_Arff);
 			System.out.println("writeLargerTextFile(\"opinion_terme_weiting.arff\",lines_termWeiting_Arff); Done");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -545,27 +588,35 @@ public class Corpus_Function
 
 	public String remove_stop_caractere(String p_crct)
 	{
-		Pattern p = Pattern.compile("[^a-zA-Z0-9]");
-		Matcher m = p.matcher(p_crct);
 		System.out.println("mot :"+p_crct);
-		if(m.find())
-		{
-			String rslt = p_crct.substring(0, m.end());
-			System.out.println("Remove_stop_caractere mot :"+rslt);
-		    return rslt;
-		}
-		return p_crct;
+		String rslt = p_crct.replaceAll("[^a-zA-Z]", "").toLowerCase().trim();
+		System.out.println("Remove_stop_caractere mot :"+rslt);
+		return rslt;
+		//		Pattern p = Pattern.compile("[^a-zA-Z]");
+		//		Matcher m = p.matcher(p_crct);
+		//		System.out.println("mot :"+p_crct);
+		//		if(m.find())
+		//		{
+		//			//String rslt = p_crct.substring(0, m.end());
+		//			//replace regx by " "j.aime" --> "j aime" --> "j" "aime"
+		//			//trim to keep "  j.aime " --> "j.aime"
+		////			String rslt = p_crct.replaceAll("[^a-zA-Z0-9]", "").toLowerCase().trim();
+		//			String rslt = p_crct.replaceAll("[^a-zA-Z]", "").toLowerCase().trim();
+		//			System.out.println("Remove_stop_caractere mot :"+rslt);
+		//		    return rslt;
+		//		}
+		//		return p_crct;
 	}
 	public  void remove_stop_words(List<String> stop_words)
 	{
 		System.out.println("words.size() :"+words.size());
-		for (Opinion op : opinions)
-		{
+//		for (Opinion op : opinions)
+//		{
 			for(String s : stop_words)
 			{
 				words.remove(s);
 			}
-		}
+//		}
 		System.out.println("words.size() :"+words.size());
 	}
 
